@@ -10,11 +10,7 @@ bl_info = {
 
 import glob
 import bpy
-from bpy import types
-from bpy import utils
-from bpy import props
-from bpy import data
-from bpy import path
+from bpy import (types, utils, props, data, path)
 
 suffixes = [
     "_MainTex",
