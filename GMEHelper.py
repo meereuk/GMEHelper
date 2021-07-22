@@ -8,12 +8,13 @@ bl_info = {
     "support": "TESTING"
 }
 
+import glob
+import bpy
 from bpy import types
 from bpy import utils
 from bpy import props
 from bpy import data
 from bpy import path
-import glob
 
 suffixes = [
     "_MainTex",
