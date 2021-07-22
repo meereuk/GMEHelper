@@ -8,11 +8,6 @@ bl_info = {
     "support": "TESTING"
 }
 
-from bpy import types
-from bpy import utils
-from bpy import props
-from bpy import data
-from bpy import path
 import glob
 import bpy
 
@@ -36,7 +31,7 @@ location = {
     "_EmissionMap": (-1300, 0)
     }
 
-class MainPanel(types.Panel):
+class MainPanel(bpy.types.Panel):
     bl_idname = "UI_PT_main_panel"
     bl_label = "GMEHelper"
     bl_category = "GMEHelper"
@@ -59,25 +54,25 @@ class MainPanel(types.Panel):
         col.separator()
         col.operator("op.create_template")
         
-class RemoveEmpties(types.Operator):
+class RemoveEmpties(bpy.types.Operator):
     bl_idname = "op.remove_empties"
     bl_label = "Remove Empty Slots"
     
     def search(self, context):
-        return [obj for obj in data.objects if obj.type.startswith("EMPTY") and not obj.children]
+        return [obj for obj in bpy.data.objects if obj.type.startswith("EMPTY") and not obj.children]
     
     def execute(self, context):
         while [] != self.search(context):
             empties = self.search(context)
             while empties:
-                data.objects.remove(empties.pop())
+                bpy.data.objects.remove(empties.pop())
         return {"FINISHED"}
     
-class TexturesPath(types.PropertyGroup):
-    path : props.StringProperty(default = "", maxlen = 4096, subtype = "DIR_PATH")
+class TexturesPath(bpy.types.PropertyGroup):
+    path : bpy.props.StringProperty(default = "", maxlen = 4096, subtype = "DIR_PATH")
 
 
-class AssignMaterials(types.Operator):
+class AssignMaterials(bpy.types.Operator):
     bl_idname = "op.assign_materials"
     bl_label = "Assign Basic Materials"
     
@@ -90,73 +85,73 @@ class AssignMaterials(types.Operator):
         
     def execute(self, context):
         # Body
-        material = data.materials.new(name = "body")
+        material = bpy.data.materials.new(name = "body")
         self.assign(context, material, query = "cf_m_body", sg_alpha = False)
         ObjectSearch(context, "cf_O_body").active_material = material
         ObjectSearch(context, "cf_O_unc").active_material = material
         
         # Head
-        material = data.materials.new(name = "head")
+        material = bpy.data.materials.new(name = "head")
         self.assign(context, material, query = "cf_m_face", sg_alpha = False)
-        data.objects["cf_O_head"].active_material = material
+        bpy.data.objects["cf_O_head"].active_material = material
         
         # Eyebrows
-        material = data.materials.new(name = "eyebrows")
+        material = bpy.data.materials.new(name = "eyebrows")
         material.blend_method = "BLEND"
         material.shadow_method = "NONE"
         self.assign(context, material, query = "cf_m_eyebrow", sg_alpha = True)
-        data.objects["cf_O_mayuge"].active_material = material
+        bpy.data.objects["cf_O_mayuge"].active_material = material
                 
         # Eyelashes
-        material = data.materials.new(name = "eyelashes")
+        material = bpy.data.materials.new(name = "eyelashes")
         material.blend_method = "BLEND"
         material.shadow_method = "NONE"
         self.assign(context, material, query = "cf_m_eyelashes", sg_alpha = True)
-        data.objects["cf_O_matuge"].active_material = material
+        bpy.data.objects["cf_O_matuge"].active_material = material
         
         # Eye whites
-        material = data.materials.new(name = "eyewhites")
+        material = bpy.data.materials.new(name = "eyewhites")
         self.assign(context, material, query = "cf_M_eyewhite", sg_alpha = True)
-        data.objects["cf_O_eyewhite_L"].active_material = material
-        data.objects["cf_O_eyewhite_R"].active_material = material
+        bpy.data.objects["cf_O_eyewhite_L"].active_material = material
+        bpy.data.objects["cf_O_eyewhite_R"].active_material = material
                 
         # Eye pupils
-        material = data.materials.new(name = "eyepupils")
+        material = bpy.data.materials.new(name = "eyepupils")
         material.blend_method = "BLEND"
         material.shadow_method = "NONE"
         self.assign(context, material, query = "cf_M_eye_", sg_alpha = True)
-        data.objects["cf_O_eye_L"].active_material = material
-        data.objects["cf_O_eye_R"].active_material = material
+        bpy.data.objects["cf_O_eye_L"].active_material = material
+        bpy.data.objects["cf_O_eye_R"].active_material = material
         
         # Eye highlights
-        material = data.materials.new(name = "eyehighlights")
+        material = bpy.data.materials.new(name = "eyehighlights")
         material.blend_method = "BLEND"
         material.shadow_method = "NONE"
         self.assign(context, material, query = "cf_M_eyehi", sg_alpha = True)
-        data.objects["cf_O_eyehikari_L"].active_material = material
-        data.objects["cf_O_eyehikari_R"].active_material = material
+        bpy.data.objects["cf_O_eyehikari_L"].active_material = material
+        bpy.data.objects["cf_O_eyehikari_R"].active_material = material
         
         # Eye kages (?)
-        material = data.materials.new(name = "eyekages")
+        material = bpy.data.materials.new(name = "eyekages")
         material.blend_method = "BLEND"
         material.shadow_method = "NONE"
         self.assign(context, material, query = "cf_M_eyekage", sg_alpha = True)
-        data.objects["cf_O_eyekage1"].active_material = material
+        bpy.data.objects["cf_O_eyekage1"].active_material = material
         
         # Teeth
-        material = data.materials.new(name = "teeth")
+        material = bpy.data.materials.new(name = "teeth")
         self.assign(context, material, query = "cf_M_tooth", sg_alpha = True)
-        data.objects["cf_O_ha"].active_material = material
+        bpy.data.objects["cf_O_ha"].active_material = material
         
         # Tongue
-        material = data.materials.new(name = "tongue")
+        material = bpy.data.materials.new(name = "tongue")
         self.assign(context, material, query = "cf_M_tang", sg_alpha = True)
-        data.objects["cf_O_sita"].active_material = material
+        bpy.data.objects["cf_O_sita"].active_material = material
         
         # Nails
-        material = data.materials.new(name = "nails")
+        material = bpy.data.materials.new(name = "nails")
         self.assign(context, material, query = "cf_M_nail", sg_alpha = True)
-        data.objects["cf_O_nail"].active_material = material
+        bpy.data.objects["cf_O_nail"].active_material = material
             
         return {"FINISHED"}
     
@@ -168,7 +163,7 @@ class MaterialBuilder():
         self.shader = self.material.node_tree.nodes.get("Principled BSDF")
         
     def TextureSearch(self, query):
-        abs = path.abspath(self.context.scene.my_tool.path).replace("\\", "/")
+        abs = bpy.path.abspath(self.context.scene.my_tool.path).replace("\\", "/")
         ans = glob.glob(abs + query + "*.png")
         print(ans)
         
@@ -189,7 +184,7 @@ class MaterialBuilder():
         
         for suffix in suffixes:
             try:
-                texture[suffix] = data.images.load(self.context.scene.my_tool.path + prefix + suffix + ".png")
+                texture[suffix] = bpy.data.images.load(self.context.scene.my_tool.path + prefix + suffix + ".png")
                 texture[suffix].colorspace_settings.name = "Raw"
                 
                 self.node[suffix] = self.material.node_tree.nodes.new("ShaderNodeTexImage")
@@ -316,12 +311,12 @@ class MaterialBuilder():
         elif "_DetailNormalMap" in self.node:
             self.material.node_tree.links.new(detail.outputs[0], self.shader.inputs[20])
             
-class CreateTemplate(types.Operator):
+class CreateTemplate(bpy.types.Operator):
     bl_idname = "op.create_template"
     bl_label = "Create Material Template"
     
     def execute(self, context):
-        material = data.materials.new(name = "template")
+        material = bpy.data.materials.new(name = "template")
         material.use_nodes = True
         shader = material.node_tree.nodes.get("Principled BSDF")
         node = {}
@@ -390,15 +385,15 @@ classes = [
 
 def register():
     for cls in classes:
-        utils.register_class(cls)
+        bpy.utils.register_class(cls)
         
-    types.Scene.my_tool = props.PointerProperty(type = TexturesPath)
+    bpy.types.Scene.my_tool = bpy.props.PointerProperty(type = TexturesPath)
 
 def unregister():
     for cls in classes:
-        utils.unregister_class(cls)
+        bpy.utils.unregister_class(cls)
         
-    del types.Scene.my_tool
+    del bpy.types.Scene.my_tool
 
 if __name__ == "__main__":
     register()
