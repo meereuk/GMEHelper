@@ -8,9 +8,13 @@ bl_info = {
     "support": "TESTING"
 }
 
+from bpy import types
+from bpy import utils
+from bpy import props
+from bpy import data
+from bpy import path
 import glob
 import bpy
-from bpy import (types, utils, props, data, path)
 
 suffixes = [
     "_MainTex",
@@ -39,15 +43,21 @@ class MainPanel(types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
         
-    def draw(self, context):    
-        self.layout.row(align = True).operator("op.remove_empties", text = "Remove Empty Slots")
-        self.layout.row(align = True).separator()
-        self.layout.row(align = True).label(text = "Choose textures folder first!")
-        self.layout.row(align = True).prop(context.scene.my_tool, "path", text = "")
-        self.layout.row(align = True).operator("op.assign_materials")
+    def draw(self, context):
+        layout = self.layout
+        scene = context.scene
+        col = layout.column(align = True)
+
+        col.operator("op.remove_empties", text = "Remove Empty Slots")
+        col.separator()
+
+        col.label(text = "Choose textures folder first!")
+        col.prop(scene.my_tool, "path", text = "")
+        col.separator()
+        col.operator("op.assign_materials")
         
-        self.layout.row(align = True).separator()
-        self.layout.row(align = True).operator("op.create_template")
+        col.separator()
+        col.operator("op.create_template")
         
 class RemoveEmpties(types.Operator):
     bl_idname = "op.remove_empties"
